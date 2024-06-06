@@ -3,7 +3,7 @@ name: My test
 on:
   - push
 
-jubs:
+jobs:
   build:
     runs-on: ubuntu-latest
 
