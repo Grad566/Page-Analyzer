@@ -1,7 +1,7 @@
 name: My test
 
 on:
-  -push
+  - push
 
 jubs:
   build:
