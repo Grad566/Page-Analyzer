@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MainTest {
+class AppTest {
     @Test
     public void tempTest() {
         var mun = 1;
-        var actual = Main.tempMet();
+        var actual = App.tempMet();
         assertEquals(actual, mun);
     }
 }
