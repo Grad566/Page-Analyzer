@@ -17,5 +17,5 @@ jobs:
         uses: gradle/gradle-build-action@v3
         with:
           gradle-version: 8.7
-      - run: ./gradlew checkstyleMain
-      - run: ./gradlew test
+      - run: .app/gradlew checkstyleMain
+      - run: .app/gradlew test
