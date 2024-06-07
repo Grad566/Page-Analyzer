@@ -1,5 +1,7 @@
 package hexlet.code;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
 
 public class App {
@@ -13,6 +15,12 @@ public class App {
             config.bundledPlugins.enableDevLogging();
         });
         app.get("/", ctx -> ctx.result("Hello, World"));
+
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:project");
+
+        var dataSource = new HikariDataSource(hikariConfig);
+
         return app;
     }
 
