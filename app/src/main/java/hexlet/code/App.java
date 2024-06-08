@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import io.javalin.rendering.template.JavalinJte;
-import gg.jte.resolve.ResourceCodeResolver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
