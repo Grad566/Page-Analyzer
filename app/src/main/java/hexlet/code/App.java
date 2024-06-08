@@ -2,9 +2,15 @@ package hexlet.code;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.repository.BaseRepository;
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
+
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import io.javalin.rendering.template.JavalinJte;
+import gg.jte.resolve.ResourceCodeResolver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,8 +29,8 @@ public class App {
     public static Javalin getApp() throws IOException, SQLException {
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
+            config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
-        app.get("/", ctx -> ctx.result("Hello, World"));
 
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(getDataBaseUrl());
@@ -42,6 +48,8 @@ public class App {
         app.before(ctx -> {
             ctx.contentType("text/html; charset=utf=8");
         });
+
+        app.get("/", ctx -> ctx.render("sites/mainPage.jte"));
 
         return app;
     }
@@ -61,5 +69,11 @@ public class App {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
         }
+    }
+
+    private static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 }

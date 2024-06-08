@@ -22,7 +22,8 @@ dependencies {
     implementation("com.h2database:h2:2.2.224")
     compileOnly("org.projectlombok:lombok:1.18.32")
     implementation("org.postgresql:postgresql:42.7.3")
-
+    implementation("gg.jte:jte:3.1.12")
+    implementation("io.javalin:javalin-rendering:6.1.3")
 }
 
 tasks.test {
