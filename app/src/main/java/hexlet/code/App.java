@@ -56,10 +56,6 @@ public class App {
                                             "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
     }
 
-    public static int tempMet() {
-        return 1;
-    }
-
     private static String readResourceFile(String fileName) throws IOException {
         var inputStream = App.class.getClassLoader().getResourceAsStream(fileName);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {

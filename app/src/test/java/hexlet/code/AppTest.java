@@ -1,14 +1,7 @@
 package hexlet.code;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import io.javalin.Javalin;
 
 class AppTest {
-    @Test
-    public void tempTest() {
-        var mun = 1;
-        var actual = App.tempMet();
-        assertEquals(actual, mun);
-    }
+    Javalin app;
 }
