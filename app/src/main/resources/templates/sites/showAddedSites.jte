@@ -3,6 +3,12 @@
 
 @template.layout.page(
     content = @`
+        @if(page.getFlash() != null)
+            <div class="alert alert-primary" role="alert">
+                ${page.getFlash()}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+            </div>
+        @endif
         <h1>Сайты</h1>
         <table class="table table-primary table-striped">
             <thead>

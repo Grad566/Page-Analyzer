@@ -1,5 +1,6 @@
 package hexlet.code.controller;
 
+import hexlet.code.dto.sites.MainPage;
 import hexlet.code.dto.sites.SitesPage;
 import hexlet.code.model.Site;
 import hexlet.code.paths.Paths;
@@ -14,7 +15,10 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class SitesController {
     public static void enterUrl(Context ctx) {
-        ctx.render("sites/mainPage.jte");
+        var flash = ctx.consumeSessionAttribute("flash");
+        var page = new MainPage((String) flash);
+        ctx.render("sites/mainPage.jte", model("page", page));
+        page.setFlash(null);
     }
 
     public static void addUrl(Context ctx) {
@@ -25,19 +29,24 @@ public class SitesController {
             var site = new Site(matcher.group());
             try {
                 SitesRepository.save(site);
+                ctx.sessionAttribute("flash", "Страница успешно добавлена");
                 ctx.redirect(Paths.urlsPath());
             } catch (SQLException e) {
-                ctx.result("Страница уже существует");
+                ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.redirect(Paths.rootPath());
             }
         } else {
-            ctx.result("Ops error message");
+            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.redirect(Paths.rootPath());
         }
     }
 
     public static void showAddedSites(Context ctx) throws SQLException {
         try {
-            var page = new SitesPage(SitesRepository.getSites());
+            var flash = ctx.consumeSessionAttribute("flash");
+            var page = new SitesPage(SitesRepository.getSites(), (String) flash);
             ctx.render("sites/showAddedSites.jte", model("page", page));
+            page.setFlash(null);
         } catch (SQLException e) {
             throw new SQLException("Data base error, when try to get sites");
         }

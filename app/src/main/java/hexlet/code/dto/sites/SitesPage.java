@@ -13,4 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class SitesPage {
     private List<Site> sites;
+    private String flash;
+
+    public SitesPage(List<Site> sites) {
+        this.sites = sites;
+    }
 }
