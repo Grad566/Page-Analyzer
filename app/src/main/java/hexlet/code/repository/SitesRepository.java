@@ -46,7 +46,7 @@ public class SitesRepository extends BaseRepository {
     }
 
     public static Optional<Site> getById(Long id) throws SQLException {
-        var sql = "SELECT id, name, TO_CHAR(created_at, 'DD/MM/YYYY HH24:MI') AS created_at FROM sites WHERE id = ?";
+        var sql = "SELECT * FROM sites WHERE id = ?";
         try (var conn = dataSource.getConnection();
                 var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, String.valueOf(id));
