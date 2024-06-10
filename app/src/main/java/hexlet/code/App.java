@@ -3,6 +3,7 @@ package hexlet.code;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.resolve.ResourceCodeResolver;
+import hexlet.code.controller.SitesController;
 import hexlet.code.paths.Paths;
 import hexlet.code.repository.BaseRepository;
 import io.javalin.Javalin;
@@ -49,7 +50,8 @@ public class App {
             ctx.contentType("text/html; charset=utf=8");
         });
 
-        app.get(Paths.rootPath(), ctx -> ctx.render("sites/mainPage.jte"));
+        app.get(Paths.rootPath(), SitesController::enterUrl);
+        app.post(Paths.urlPath(), SitesController::addUrl);
 
         return app;
     }
