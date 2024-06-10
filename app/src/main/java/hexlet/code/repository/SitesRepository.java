@@ -60,7 +60,7 @@ public class SitesRepository extends BaseRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new SQLException("DB error, when try to find site");
+            throw new SQLException(e.getMessage());
         }
     }
 }
