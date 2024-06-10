@@ -49,12 +49,12 @@ public class SitesRepository extends BaseRepository {
         var sql = "SELECT * FROM sites WHERE id = ?";
         try (var conn = dataSource.getConnection();
                 var stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, String.valueOf(id));
+            stmt.setLong(1, id);
             var resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 var name = resultSet.getString("name");
-                var createdAt = resultSet.getString("created_at");
-                var site = new Site(id, name, createdAt);
+                var createdAt = resultSet.getTimestamp("created_at");
+                var site = new Site(id, name, String.valueOf(createdAt));
                 return Optional.of(site);
             } else {
                 return Optional.empty();
