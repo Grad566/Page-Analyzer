@@ -5,7 +5,7 @@ public class Paths {
         return "/";
     }
 
-    public static String urlPath() {
-        return "/url";
+    public static String urlsPath() {
+        return "/urls";
     }
 }

@@ -26,6 +26,7 @@ public class SitesController {
             try {
                 SitesRepository.save(site);
                 var page = new SitesPage(SitesRepository.getSites());
+                ctx.redirect(Paths.urlsPath());
                 ctx.render("sites/showAddedSites.jte", model("page", page));
             } catch (SQLException e) {
                 ctx.result("Страница уже существует");
@@ -33,5 +34,9 @@ public class SitesController {
         } else {
             ctx.result("Ops error message");
         }
+    }
+
+    public static void showAddedSites(Context ctx) {
+
     }
 }

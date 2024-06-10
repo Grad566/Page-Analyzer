@@ -51,7 +51,8 @@ public class App {
         });
 
         app.get(Paths.rootPath(), SitesController::enterUrl);
-        app.post(Paths.urlPath(), SitesController::addUrl);
+        app.post(Paths.urlsPath(), SitesController::addUrl);
+        app.get(Paths.urlsPath(), SitesController::showAddedSites);
 
         return app;
     }
