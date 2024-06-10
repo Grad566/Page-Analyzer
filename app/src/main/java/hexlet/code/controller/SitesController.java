@@ -25,9 +25,7 @@ public class SitesController {
             var site = new Site(matcher.group());
             try {
                 SitesRepository.save(site);
-                var page = new SitesPage(SitesRepository.getSites());
                 ctx.redirect(Paths.urlsPath());
-                ctx.render("sites/showAddedSites.jte", model("page", page));
             } catch (SQLException e) {
                 ctx.result("Страница уже существует");
             }
@@ -36,7 +34,12 @@ public class SitesController {
         }
     }
 
-    public static void showAddedSites(Context ctx) {
-
+    public static void showAddedSites(Context ctx) throws SQLException {
+        try {
+            var page = new SitesPage(SitesRepository.getSites());
+            ctx.render("sites/showAddedSites.jte", model("page", page));
+        } catch (SQLException e) {
+            throw new SQLException("Data base error, when try to get sites");
+        }
     }
 }

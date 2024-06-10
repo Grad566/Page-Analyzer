@@ -6,7 +6,7 @@
                     <h1>Анализатор страниц</h1>
                 </div>
             </div>
-            <form action="/url" method="post">
+            <form action="/urls" method="post">
                 <div class="mb-3">
                     <label class="form-label">Бесплатно проверяйте сайты на SEO пригодность</label>
                     <div class="col-auto">
