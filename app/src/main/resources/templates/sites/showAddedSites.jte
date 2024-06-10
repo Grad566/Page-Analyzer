@@ -1,4 +1,5 @@
 @import hexlet.code.dto.sites.SitesPage
+@import hexlet.code.paths.Paths
 @param SitesPage page
 
 @template.layout.page(
@@ -21,7 +22,7 @@
                 @for(var site : page.getSites())
                     <tr>
                         <th scope="row">${site.getId()}</th>
-                        <th>${site.getName()}</th>
+                        <th><a href="${Paths.urlsIdPath(site.getId())}">${site.getName()}</a></th>
                     </tr>
             @endfor
             </tbody>

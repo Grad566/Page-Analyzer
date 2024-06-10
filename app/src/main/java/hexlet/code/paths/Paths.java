@@ -8,4 +8,8 @@ public class Paths {
     public static String urlsPath() {
         return "/urls";
     }
+
+    public static String urlsIdPath(Long id) {
+        return "/urls/" + id;
+    }
 }

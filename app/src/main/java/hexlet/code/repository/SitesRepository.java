@@ -8,10 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
-public class SitesRepository extends BaseRepository{
+public class SitesRepository extends BaseRepository {
     public static void save(Site site) throws SQLException {
         var sql = "INSERT INTO sites (name) VALUES (?)";
         try (var conn = dataSource.getConnection();
@@ -36,11 +37,30 @@ public class SitesRepository extends BaseRepository{
             while (resultSet.next()) {
                 var id = resultSet.getString("id");
                 var name = resultSet.getString("name");
-                var created_at = resultSet.getString("created_at");
-                var site = new Site(Long.parseLong(id), name, created_at);
+                var createdAt = resultSet.getString("created_at");
+                var site = new Site(Long.parseLong(id), name, createdAt);
                 result.add(site);
             }
             return result;
+        }
+    }
+
+    public static Optional<Site> getById(Long id) throws SQLException {
+        var sql = "SELECT id, name, TO_CHAR(created_at, 'DD/MM/YYYY HH24:MI') AS created_at FROM sites WHERE id = ?";
+        try (var conn = dataSource.getConnection();
+                var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, String.valueOf(id));
+            var resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                var name = resultSet.getString("name");
+                var createdAt = resultSet.getString("created_at");
+                var site = new Site(id, name, createdAt);
+                return Optional.of(site);
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new SQLException("DB error, when try to find site");
         }
     }
 }

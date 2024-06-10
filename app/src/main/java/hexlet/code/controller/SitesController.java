@@ -1,14 +1,15 @@
 package hexlet.code.controller;
 
 import hexlet.code.dto.sites.MainPage;
+import hexlet.code.dto.sites.SitePage;
 import hexlet.code.dto.sites.SitesPage;
 import hexlet.code.model.Site;
 import hexlet.code.paths.Paths;
 import hexlet.code.repository.SitesRepository;
 import io.javalin.http.Context;
+import io.javalin.http.NotFoundResponse;
 
 import java.sql.SQLException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -50,5 +51,13 @@ public class SitesController {
         } catch (SQLException e) {
             throw new SQLException("Data base error, when try to get sites");
         }
+    }
+
+    public static void showInfoAboutSite(Context ctx) throws SQLException {
+        var id = ctx.pathParamAsClass("id", Long.class).get();
+        var site = SitesRepository.getById(id)
+                    .orElseThrow(() -> new NotFoundResponse("Site with id: " + " not found"));
+        var page = new SitePage(site);
+        ctx.render("sites/showInfoAboutSite.jte", model("page", page));
     }
 }

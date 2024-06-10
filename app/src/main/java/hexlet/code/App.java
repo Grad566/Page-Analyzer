@@ -53,6 +53,7 @@ public class App {
         app.get(Paths.rootPath(), SitesController::enterUrl);
         app.post(Paths.urlsPath(), SitesController::addUrl);
         app.get(Paths.urlsPath(), SitesController::showAddedSites);
+        app.get("/urls/{id}", SitesController::showInfoAboutSite);
 
         return app;
     }
