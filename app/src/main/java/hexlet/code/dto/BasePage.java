@@ -1,2 +1,4 @@
-package hexlet.code.dto;public class BasePage {
+package hexlet.code.dto;
+
+public class BasePage {
 }

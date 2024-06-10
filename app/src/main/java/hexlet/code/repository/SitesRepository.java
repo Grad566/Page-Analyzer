@@ -23,8 +23,6 @@ public class SitesRepository extends BaseRepository{
             if (generatedKey.next()) {
                 site.setId(generatedKey.getLong(1));
                 site.setCreatedAt(generatedKey.getString("created_at"));
-            } else {
-                throw new SQLException("Страница уже существует");
             }
         }
     }
