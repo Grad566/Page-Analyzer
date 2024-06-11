@@ -25,6 +25,11 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("gg.jte:jte:3.1.12")
     implementation("io.javalin:javalin-rendering:6.1.3")
+    implementation("io.javalin:javalin-bundle:6.1.3")
+    testImplementation("org.assertj:assertj-core:3.11.1")
+    testImplementation("org.mockito:mockito-core:4.6.1")
+    testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:4.3.0")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.2.3")
 }
 
 tasks.test {
