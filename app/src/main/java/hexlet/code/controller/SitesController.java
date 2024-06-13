@@ -14,7 +14,6 @@ import io.javalin.http.NotFoundResponse;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static io.javalin.rendering.template.TemplateUtil.model;

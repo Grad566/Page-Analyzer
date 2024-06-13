@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UrlChecksRepository extends BaseRepository{
+public class UrlChecksRepository extends BaseRepository {
     public static List<UrlCheck> getUrlChecksBySiteId(Long id) throws SQLException {
         var result = new ArrayList<UrlCheck>();
         var sql = "SELECT * FROM url_checks WHERE url_id = ?";
@@ -22,8 +22,8 @@ public class UrlChecksRepository extends BaseRepository{
                 var title = resultSet.getString("title");
                 var h1 = resultSet.getString("h_1");
                 var description = resultSet.getString("description");
-                var created_at = resultSet.getTimestamp("created_at");
-                var formattedCreatedAt = TimeUtils.getFormattedData(created_at);
+                var createdAt = resultSet.getTimestamp("created_at");
+                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
                 var urlCheck = UrlCheck.builder()
                                         .id(checkId)
                                         .description(description)
@@ -44,8 +44,8 @@ public class UrlChecksRepository extends BaseRepository{
     }
 
     public static void save(UrlCheck urlCheck) throws SQLException {
-        var sql = "INSERT INTO url_checks (status_code, title, h_1, description, url_id) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+        var sql = "INSERT INTO url_checks (status_code, title, h_1, description, url_id) "
+                + "VALUES (?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
                 var prepareStmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             prepareStmt.setInt(1, urlCheck.getStatusCode());
