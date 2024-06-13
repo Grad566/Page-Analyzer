@@ -5,6 +5,7 @@ import io.javalin.testtools.JavalinTest;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,12 @@ class AppTest {
     public final void setApp() throws IOException, SQLException {
         app = App.getApp();
         server = new MockWebServer();
+        server.start();
+    }
+
+    @AfterEach
+    public void serverDown() throws Exception {
+        server.shutdown();
     }
 
     @Test
@@ -109,7 +116,7 @@ class AppTest {
 
     @Test
     public void testUrlCheckCode200() throws IOException {
-        HttpUrl baseUrl = server.url("https://123.com");
+        HttpUrl baseUrl = server.url("/123.com");
         server.enqueue(new MockResponse().setResponseCode(200));
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=" + baseUrl;
@@ -118,12 +125,11 @@ class AppTest {
             var response = client.get("/urls/1");
             assertThat(response.body().string().contains("200"));
         });
-        server.shutdown();
     }
 
     @Test
     public void testUrlCheckCode404() throws IOException {
-        HttpUrl baseUrl = server.url("https://123.com");
+        HttpUrl baseUrl = server.url("/123.com");
         server.enqueue(new MockResponse().setResponseCode(404));
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=" + baseUrl;
@@ -132,7 +138,6 @@ class AppTest {
             var response = client.get("/urls/1");
             assertThat(response.body().string().contains("404"));
         });
-        server.shutdown();
     }
 
 }
