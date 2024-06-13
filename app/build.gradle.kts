@@ -34,6 +34,7 @@ dependencies {
     implementation("com.konghq:unirest-java-core")
     implementation("com.konghq:unirest-modules-gson")
     implementation("com.konghq:unirest-modules-jackson")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 tasks.test {

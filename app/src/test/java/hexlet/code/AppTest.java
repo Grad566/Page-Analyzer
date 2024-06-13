@@ -14,10 +14,12 @@ import java.sql.SQLException;
 
 class AppTest {
     Javalin app;
+    MockWebServer server;
 
     @BeforeEach
     public final void setApp() throws IOException, SQLException {
         app = App.getApp();
+        server = new MockWebServer();
     }
 
     @Test
@@ -40,7 +42,7 @@ class AppTest {
     }
 
     @Test
-    public void testAddUrl2() {
+    public void testAddUri() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=http://localhost:7070/abracodabre";
             var response = client.post("/urls", requestBody);
@@ -63,9 +65,9 @@ class AppTest {
     public void testAddTwoEqualsUrl() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://github.com";
-            var response = client.post("/urls", requestBody);
+            client.post("/urls", requestBody);
             requestBody = "url=https://github.com/copy";
-            response = client.post("/urls", requestBody);
+            var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string().contains("Страница уже существует"));
         });
@@ -75,9 +77,9 @@ class AppTest {
     public void testShowAddedSites() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://github.com";
-            var response = client.post("/urls", requestBody);
+            client.post("/urls", requestBody);
             requestBody = "url=http://localhost:7070/abracodabre";
-            response = client.post("/urls", requestBody);
+            var response = client.post("/urls", requestBody);
 
             assertThat(response.body().string().contains("http://localhost:7070")).isTrue();
 
@@ -90,8 +92,8 @@ class AppTest {
     public void testCheckAddedUrl() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://github.com";
-            var response = client.post("/urls", requestBody);
-            response = client.get("/urls/1");
+            client.post("/urls", requestBody);
+            var response = client.get("/urls/1");
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string().contains("https://github.com"));
         });
@@ -103,6 +105,36 @@ class AppTest {
             var response = client.post("/urls/23498");
             assertThat(response.code()).isEqualTo(404);
         });
+    }
+
+    @Test
+    public void testUrlCheckCode200() throws IOException {
+        server.start();
+        server.enqueue(new MockResponse().setResponseCode(200));
+        HttpUrl baseUrl = server.url("https://123.com");
+        JavalinTest.test(app, (server, client) -> {
+            var requestBody = "url=" + baseUrl;
+            client.post("/urls", requestBody);
+            client.post("/urls/1/checks");
+            var response = client.get("/urls/1");
+            assertThat(response.body().string().contains("200"));
+        });
+        server.shutdown();
+    }
+
+    @Test
+    public void testUrlCheckCode404() throws IOException {
+        server.start();
+        server.enqueue(new MockResponse().setResponseCode(404));
+        HttpUrl baseUrl = server.url("https://123.com");
+        JavalinTest.test(app, (server, client) -> {
+            var requestBody = "url=" + baseUrl;
+            client.post("/urls", requestBody);
+            client.post("/urls/1/checks");
+            var response = client.get("/urls/1");
+            assertThat(response.body().string().contains("404"));
+        });
+        server.shutdown();
     }
 
 }
