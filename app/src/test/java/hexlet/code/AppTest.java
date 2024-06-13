@@ -109,9 +109,8 @@ class AppTest {
 
     @Test
     public void testUrlCheckCode200() throws IOException {
-        server.start();
-        server.enqueue(new MockResponse().setResponseCode(200));
         HttpUrl baseUrl = server.url("https://123.com");
+        server.enqueue(new MockResponse().setResponseCode(200));
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=" + baseUrl;
             client.post("/urls", requestBody);
@@ -124,9 +123,8 @@ class AppTest {
 
     @Test
     public void testUrlCheckCode404() throws IOException {
-        server.start();
-        server.enqueue(new MockResponse().setResponseCode(404));
         HttpUrl baseUrl = server.url("https://123.com");
+        server.enqueue(new MockResponse().setResponseCode(404));
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=" + baseUrl;
             client.post("/urls", requestBody);
