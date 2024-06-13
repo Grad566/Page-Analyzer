@@ -30,6 +30,10 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.6.1")
     testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:4.3.0")
     testImplementation("io.github.bonigarcia:webdrivermanager:5.2.3")
+    implementation(platform("com.konghq:unirest-java-bom:4.3.0"))
+    implementation("com.konghq:unirest-java-core")
+    implementation("com.konghq:unirest-modules-gson")
+    implementation("com.konghq:unirest-modules-jackson")
 }
 
 tasks.test {

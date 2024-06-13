@@ -1,13 +1,12 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.Site;
+import hexlet.code.utils.TimeUtils;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,7 @@ public class SitesRepository extends BaseRepository {
             if (generatedKey.next()) {
                 site.setId(generatedKey.getLong(1));
                 var createdAt = generatedKey.getTimestamp("created_at");
-                var formattedCreatedAt = getFormattedData(createdAt);
+                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
                 site.setCreatedAt(formattedCreatedAt);
             }
         }
@@ -42,7 +41,7 @@ public class SitesRepository extends BaseRepository {
                 var id = resultSet.getLong("id");
                 var name = resultSet.getString("name");
                 var createdAt = resultSet.getTimestamp("created_at");
-                var formattedCreatedAt = getFormattedData(createdAt);
+                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
                 var site = new Site(id, name, formattedCreatedAt);
                 result.add(site);
             }
@@ -59,7 +58,7 @@ public class SitesRepository extends BaseRepository {
             if (resultSet.next()) {
                 var name = resultSet.getString("name");
                 var createdAt = resultSet.getTimestamp("created_at");
-                var formattedCreatedAt = getFormattedData(createdAt);
+                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
                 var site = new Site(id, name, formattedCreatedAt);
                 return Optional.of(site);
             } else {
@@ -68,9 +67,5 @@ public class SitesRepository extends BaseRepository {
         } catch (SQLException e) {
             throw new SQLException(e.getMessage());
         }
-    }
-
-    private static String getFormattedData(Timestamp timestamp) {
-        return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(timestamp);
     }
 }

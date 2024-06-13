@@ -10,4 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SitePage {
     private Site site;
+    private String flash;
+
+    public SitePage(Site site) {
+        this.site = site;
+    }
 }

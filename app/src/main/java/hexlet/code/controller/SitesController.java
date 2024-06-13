@@ -3,13 +3,18 @@ package hexlet.code.controller;
 import hexlet.code.dto.sites.MainPage;
 import hexlet.code.dto.sites.SitePage;
 import hexlet.code.dto.sites.SitesPage;
+import hexlet.code.dto.urlChecks.UrlCheckPage;
 import hexlet.code.model.Site;
 import hexlet.code.paths.Paths;
 import hexlet.code.repository.SitesRepository;
+import hexlet.code.repository.UrlChecksRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -57,7 +62,19 @@ public class SitesController {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var site = SitesRepository.getById(id)
                     .orElseThrow(() -> new NotFoundResponse("Site with id: " + " not found"));
+
+        Map<String, Object> model = new HashMap<>();
+
         var page = new SitePage(site);
-        ctx.render("sites/showInfoAboutSite.jte", model("page", page));
+        var flash = ctx.consumeSessionAttribute("flash");
+        page.setFlash((String) flash);
+        model.put("page", page);
+
+        var urlChecks = UrlChecksRepository.getUrlChecksBySiteId(id);
+        var checksPage = new UrlCheckPage(urlChecks);
+        model.put("checksPage", checksPage);
+
+        ctx.render("sites/showInfoAboutSite.jte", model);
+        page.setFlash(null);
     }
 }
