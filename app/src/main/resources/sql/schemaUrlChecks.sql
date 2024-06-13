@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS url_checks;
+
 
 CREATE TABLE url_checks (
     id SERIAL PRIMARY KEY,

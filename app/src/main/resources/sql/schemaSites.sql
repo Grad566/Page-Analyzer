@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS url_checks;
 DROP TABLE IF EXISTS sites;
 
 CREATE TABLE sites (
