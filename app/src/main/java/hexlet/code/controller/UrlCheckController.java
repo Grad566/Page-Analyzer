@@ -23,7 +23,7 @@ public class UrlCheckController {
             var codeResponse = Unirest.get(url).asEmpty().getStatus();
             var body = Unirest.get(url).asString().getBody();
             var doc = Jsoup.parse(body);
-            var title = doc.title();
+            var title = doc.title() == null ? "" : doc.title();
             var h1 = doc.selectFirst("h1") == null ? ""
                     : Objects.requireNonNull(doc.selectFirst("h1")).text();
 
