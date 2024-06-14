@@ -24,10 +24,10 @@ public class UrlCheckController {
             var body = Unirest.get(url).asString().getBody();
             var doc = Jsoup.parse(body);
             var title = doc.title();
-            var h1 = doc.selectFirst("h1") == null ? null
+            var h1 = doc.selectFirst("h1") == null ? ""
                     : Objects.requireNonNull(doc.selectFirst("h1")).text();
 
-            String description = doc.select("meta[name=description]").first() == null ? null
+            String description = doc.select("meta[name=description]").first() == null ? ""
                     : Objects.requireNonNull(doc.selectFirst("meta[name=description]"))
                         .attr("content");
 
