@@ -35,6 +35,7 @@ dependencies {
     implementation("com.konghq:unirest-modules-gson")
     implementation("com.konghq:unirest-modules-jackson")
     implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    implementation ("org.jsoup:jsoup:1.17.2")
 }
 
 tasks.test {

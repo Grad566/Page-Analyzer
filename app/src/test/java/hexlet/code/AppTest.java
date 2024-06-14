@@ -2,12 +2,12 @@ package hexlet.code;
 
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
-import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
@@ -15,18 +15,10 @@ import java.sql.SQLException;
 
 class AppTest {
     Javalin app;
-    MockWebServer server;
 
     @BeforeEach
     public final void setApp() throws IOException, SQLException {
         app = App.getApp();
-        server = new MockWebServer();
-        server.start();
-    }
-
-    @AfterEach
-    public void serverDown() throws Exception {
-        server.shutdown();
     }
 
     @Test
@@ -116,8 +108,12 @@ class AppTest {
 
     @Test
     public void testUrlCheckCode200() throws IOException {
-        HttpUrl baseUrl = server.url("/123.com");
-        server.enqueue(new MockResponse().setResponseCode(200));
+        MockWebServer mockServer = new MockWebServer();
+        mockServer.enqueue(new MockResponse()
+                .addHeader("Content-Type", "text/html; charset=utf-8"));
+        mockServer.enqueue(new MockResponse().setResponseCode(200));
+        mockServer.start();
+        var baseUrl = mockServer.url("/test").toString();
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=" + baseUrl;
             client.post("/urls", requestBody);
@@ -125,12 +121,17 @@ class AppTest {
             var response = client.get("/urls/1");
             assertThat(response.body().string().contains("200"));
         });
+        mockServer.shutdown();
     }
 
     @Test
     public void testUrlCheckCode404() throws IOException {
-        HttpUrl baseUrl = server.url("/123.com");
-        server.enqueue(new MockResponse().setResponseCode(404));
+        MockWebServer mockServer = new MockWebServer();
+        mockServer.enqueue(new MockResponse()
+                .addHeader("Content-Type", "text/html; charset=utf-8"));
+        mockServer.enqueue(new MockResponse().setResponseCode(404));
+        mockServer.start();
+        var baseUrl = mockServer.url("/test").toString();
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=" + baseUrl;
             client.post("/urls", requestBody);
@@ -138,6 +139,30 @@ class AppTest {
             var response = client.get("/urls/1");
             assertThat(response.body().string().contains("404"));
         });
+        mockServer.shutdown();
+    }
+
+    @Test
+    public void testUrlCheckInnerContent() throws IOException {
+        MockWebServer mockServer = new MockWebServer();
+        mockServer.enqueue(new MockResponse()
+                .addHeader("Content-Type", "text/html; charset=utf-8")
+                .setBody("<title>I am a title</title> <h1>I am a h1</h1> "
+                        + "<meta name=\"description\" content=\"I am a content\"> "));
+        mockServer.enqueue(new MockResponse().setResponseCode(200));
+        mockServer.start();
+        var baseUrl = mockServer.url("/test").toString();
+        JavalinTest.test(app, (server, client) -> {
+            var requestBody = "url=" + baseUrl;
+            client.post("/urls", requestBody);
+            client.post("/urls/1/checks");
+            var response = client.get("/urls/1");
+            String responseBody = response.body().string();
+            assertThat(responseBody.contains("I am a h1"));
+            assertThat(responseBody.contains("I am a title"));
+            assertThat(responseBody.contains("I am a content"));
+        });
+        mockServer.shutdown();
     }
 
 }
