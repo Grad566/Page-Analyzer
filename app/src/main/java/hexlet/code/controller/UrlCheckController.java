@@ -27,7 +27,7 @@ public class UrlCheckController {
             var h1 = doc.selectFirst("h1") == null ? ""
                     : Objects.requireNonNull(doc.selectFirst("h1")).text();
 
-            String description = doc.select("meta[name=description]").first() == null ? ""
+            var description = doc.select("meta[name=description]").first() == null ? ""
                     : Objects.requireNonNull(doc.selectFirst("meta[name=description]"))
                         .attr("content");
 

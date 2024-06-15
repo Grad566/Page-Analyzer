@@ -8,5 +8,5 @@ CREATE TABLE url_checks (
     description text NOT NULL,
     url_id INT NOT NULL,
     FOREIGN KEY (url_id) REFERENCES sites(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
