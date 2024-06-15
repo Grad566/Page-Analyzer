@@ -20,7 +20,7 @@ public class UrlChecksRepository extends BaseRepository {
                 var checkId = resultSet.getLong("id");
                 var statusCode = resultSet.getInt("status_code");
                 var title = resultSet.getString("title");
-                var h1 = resultSet.getString("h_1");
+                var h1 = resultSet.getString("h1");
                 var description = resultSet.getString("description");
                 var createdAt = resultSet.getTimestamp("created_at");
                 var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
@@ -44,7 +44,7 @@ public class UrlChecksRepository extends BaseRepository {
     }
 
     public static void save(UrlCheck urlCheck) throws SQLException {
-        var sql = "INSERT INTO url_checks (status_code, title, h_1, description, url_id) "
+        var sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id) "
                 + "VALUES (?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
                 var prepareStmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
