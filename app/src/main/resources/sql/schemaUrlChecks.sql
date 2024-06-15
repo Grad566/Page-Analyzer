@@ -7,6 +7,6 @@ CREATE TABLE url_checks (
     h_1 VARCHAR(255) NOT NULL,
     description text NOT NULL,
     url_id INT NOT NULL,
-    FOREIGN KEY (url_id) REFERENCES sites(id),
+    FOREIGN KEY (url_id) REFERENCES urls(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

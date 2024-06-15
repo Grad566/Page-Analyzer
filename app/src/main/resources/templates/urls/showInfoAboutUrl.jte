@@ -1,7 +1,7 @@
-@import hexlet.code.dto.sites.SitePage
+@import hexlet.code.dto.urls.UrlPage
 @import hexlet.code.dto.urlChecks.UrlCheckPage
 @param UrlCheckPage checksPage
-@param SitePage page
+@param UrlPage page
 
 
 @template.layout.page(
@@ -12,25 +12,25 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
             </div>
         @endif
-        <h1>Сайт: ${page.getSite().getName()}</h1>
+        <h1>Сайт: ${page.getUrl().getName()}</h1>
         <table class="table table-primary table-striped">
             <tbody>
                 <tr>
                     <th>ID</th>
-                    <th>${page.getSite().getId()}</th>
+                    <th>${page.getUrl().getId()}</th>
                 </tr>
                 <tr>
                     <th>Имя</th>
-                    <th>${page.getSite().getName()}</th>
+                    <th>${page.getUrl().getName()}</th>
                 </tr>
                 <tr>
                     <th>Дата создания</th>
-                    <th>${page.getSite().getCreatedAt()}</th>
+                    <th>${page.getUrl().getCreatedAt()}</th>
                 </tr>
             </tbody>
         </table>
         <h1>Проверки</h1>
-        <form action="/urls/${page.getSite().getId()}/checks" method="post">
+        <form action="/urls/${page.getUrl().getId()}/checks" method="post">
             <button type="submit">Запустить проверку</button>
         </form>
         <table class="table table-primary table-striped">

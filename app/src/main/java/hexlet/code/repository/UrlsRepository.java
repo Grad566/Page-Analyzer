@@ -1,6 +1,6 @@
 package hexlet.code.repository;
 
-import hexlet.code.model.Site;
+import hexlet.code.model.Url;
 import hexlet.code.utils.TimeUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,44 +13,44 @@ import java.util.Optional;
 
 @Getter
 @Setter
-public class SitesRepository extends BaseRepository {
-    public static void save(Site site) throws SQLException {
-        var sql = "INSERT INTO sites (name) VALUES (?)";
+public class UrlsRepository extends BaseRepository {
+    public static void save(Url url) throws SQLException {
+        var sql = "INSERT INTO urls (name) VALUES (?)";
         try (var conn = dataSource.getConnection();
                 var prepareStmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            prepareStmt.setString(1, site.getName());
+            prepareStmt.setString(1, url.getName());
             prepareStmt.executeUpdate();
 
             var generatedKey = prepareStmt.getGeneratedKeys();
             if (generatedKey.next()) {
-                site.setId(generatedKey.getLong(1));
+                url.setId(generatedKey.getLong(1));
                 var createdAt = generatedKey.getTimestamp("created_at");
                 var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
-                site.setCreatedAt(formattedCreatedAt);
+                url.setCreatedAt(formattedCreatedAt);
             }
         }
     }
 
-    public static List<Site> getSites() throws SQLException {
-        var sql = "SELECT * FROM sites";
+    public static List<Url> getUrls() throws SQLException {
+        var sql = "SELECT * FROM urls";
         try (var conn = dataSource.getConnection();
                 var stmt = conn.prepareStatement(sql)) {
             var resultSet = stmt.executeQuery();
-            var result = new ArrayList<Site>();
+            var result = new ArrayList<Url>();
             while (resultSet.next()) {
                 var id = resultSet.getLong("id");
                 var name = resultSet.getString("name");
                 var createdAt = resultSet.getTimestamp("created_at");
                 var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
-                var site = new Site(id, name, formattedCreatedAt);
+                var site = new Url(id, name, formattedCreatedAt);
                 result.add(site);
             }
             return result;
         }
     }
 
-    public static Optional<Site> getById(Long id) throws SQLException {
-        var sql = "SELECT * FROM sites WHERE id = ?";
+    public static Optional<Url> getById(Long id) throws SQLException {
+        var sql = "SELECT * FROM urls WHERE id = ?";
         try (var conn = dataSource.getConnection();
                 var stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
@@ -59,7 +59,7 @@ public class SitesRepository extends BaseRepository {
                 var name = resultSet.getString("name");
                 var createdAt = resultSet.getTimestamp("created_at");
                 var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
-                var site = new Site(id, name, formattedCreatedAt);
+                var site = new Url(id, name, formattedCreatedAt);
                 return Optional.of(site);
             } else {
                 return Optional.empty();

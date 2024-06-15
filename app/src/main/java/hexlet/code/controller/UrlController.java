@@ -1,12 +1,12 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.sites.MainPage;
-import hexlet.code.dto.sites.SitePage;
-import hexlet.code.dto.sites.SitesPage;
+import hexlet.code.dto.urls.MainPage;
+import hexlet.code.dto.urls.UrlPage;
+import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.dto.urlChecks.UrlCheckPage;
-import hexlet.code.model.Site;
+import hexlet.code.model.Url;
 import hexlet.code.paths.Paths;
-import hexlet.code.repository.SitesRepository;
+import hexlet.code.repository.UrlsRepository;
 import hexlet.code.repository.UrlChecksRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
@@ -18,11 +18,11 @@ import java.util.regex.Pattern;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
-public class SitesController {
+public class UrlController {
     public static void enterUrl(Context ctx) {
         var flash = ctx.consumeSessionAttribute("flash");
         var page = new MainPage((String) flash);
-        ctx.render("sites/mainPage.jte", model("page", page));
+        ctx.render("urls/mainPage.jte", model("page", page));
         page.setFlash(null);
     }
 
@@ -31,9 +31,9 @@ public class SitesController {
         var pattern = Pattern.compile("^((https|http)://[^/]+)");
         var matcher = pattern.matcher(uri);
         if (matcher.find()) {
-            var site = new Site(matcher.group());
+            var site = new Url(matcher.group());
             try {
-                SitesRepository.save(site);
+                UrlsRepository.save(site);
                 ctx.sessionAttribute("flash", "Страница успешно добавлена");
                 ctx.redirect(Paths.urlsPath());
             } catch (SQLException e) {
@@ -46,25 +46,25 @@ public class SitesController {
         }
     }
 
-    public static void showAddedSites(Context ctx) throws SQLException {
+    public static void showAddedUrls(Context ctx) throws SQLException {
         try {
             var flash = ctx.consumeSessionAttribute("flash");
-            var page = new SitesPage(SitesRepository.getSites(), (String) flash);
-            ctx.render("sites/showAddedSites.jte", model("page", page));
+            var page = new UrlsPage(UrlsRepository.getUrls(), (String) flash);
+            ctx.render("urls/showAddedUrls.jte", model("page", page));
             page.setFlash(null);
         } catch (SQLException e) {
-            throw new SQLException("Data base error, when try to get sites");
+            throw new SQLException("Data base error, when try to get urls");
         }
     }
 
-    public static void showInfoAboutSite(Context ctx) throws SQLException {
+    public static void showInfoAboutUrl(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
-        var site = SitesRepository.getById(id)
+        var site = UrlsRepository.getById(id)
                     .orElseThrow(() -> new NotFoundResponse("Site with id: " + " not found"));
 
         Map<String, Object> model = new HashMap<>();
 
-        var page = new SitePage(site);
+        var page = new UrlPage(site);
         var flash = ctx.consumeSessionAttribute("flash");
         page.setFlash((String) flash);
         model.put("page", page);
@@ -73,7 +73,7 @@ public class SitesController {
         var checksPage = new UrlCheckPage(urlChecks);
         model.put("checksPage", checksPage);
 
-        ctx.render("sites/showInfoAboutSite.jte", model);
+        ctx.render("urls/showInfoAboutUrl.jte", model);
         page.setFlash(null);
     }
 }

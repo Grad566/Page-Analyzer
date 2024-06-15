@@ -2,7 +2,7 @@ package hexlet.code.controller;
 
 import hexlet.code.model.UrlCheck;
 import hexlet.code.paths.Paths;
-import hexlet.code.repository.SitesRepository;
+import hexlet.code.repository.UrlsRepository;
 import hexlet.code.repository.UrlChecksRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
@@ -15,7 +15,7 @@ import java.util.Objects;
 public class UrlCheckController {
     public static void makeCheck(Context ctx) throws SQLException {
         var siteId = ctx.pathParamAsClass("id", Long.class).get();
-        var site = SitesRepository.getById(siteId)
+        var site = UrlsRepository.getById(siteId)
                     .orElseThrow(() -> new NotFoundResponse("Site with id: " + siteId + " not found"));
         var url = site.getName();
 

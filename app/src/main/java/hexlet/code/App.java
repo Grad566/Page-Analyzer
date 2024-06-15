@@ -3,7 +3,7 @@ package hexlet.code;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.resolve.ResourceCodeResolver;
-import hexlet.code.controller.SitesController;
+import hexlet.code.controller.UrlController;
 import hexlet.code.controller.UrlCheckController;
 import hexlet.code.paths.Paths;
 import hexlet.code.repository.BaseRepository;
@@ -38,12 +38,12 @@ public class App {
         hikariConfig.setJdbcUrl(getDataBaseUrl());
 
         var dataSource = new HikariDataSource(hikariConfig);
-        var sqlSites = readResourceFile("sql/schemaSites.sql");
+        var sqlUrls = readResourceFile("sql/schemaUrls.sql");
         var sqlUrlChecks = readResourceFile("sql/schemaUrlChecks.sql");
 
         try (var connection = dataSource.getConnection();
                 var statement = connection.createStatement()) {
-            statement.execute(sqlSites);
+            statement.execute(sqlUrls);
             statement.execute(sqlUrlChecks);
         }
 
@@ -53,10 +53,10 @@ public class App {
             ctx.contentType("text/html; charset=utf=8");
         });
 
-        app.get(Paths.rootPath(), SitesController::enterUrl);
-        app.post(Paths.urlsPath(), SitesController::addUrl);
-        app.get(Paths.urlsPath(), SitesController::showAddedSites);
-        app.get(Paths.urlsIdPathWithoutId(), SitesController::showInfoAboutSite);
+        app.get(Paths.rootPath(), UrlController::enterUrl);
+        app.post(Paths.urlsPath(), UrlController::addUrl);
+        app.get(Paths.urlsPath(), UrlController::showAddedUrls);
+        app.get(Paths.urlsIdPathWithoutId(), UrlController::showInfoAboutUrl);
         app.post(Paths.urlsIdChecksPathWithoutId(), UrlCheckController::makeCheck);
 
         return app;

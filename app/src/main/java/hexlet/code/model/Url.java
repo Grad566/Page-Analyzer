@@ -9,12 +9,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Site {
+public class Url {
     private Long id;
     private String name;
     private String createdAt;
 
-    public Site(String name) {
+    public Url(String name) {
         this.name = name;
     }
 }

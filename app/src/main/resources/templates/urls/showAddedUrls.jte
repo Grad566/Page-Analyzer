@@ -1,6 +1,6 @@
-@import hexlet.code.dto.sites.SitesPage
+@import hexlet.code.dto.urls.UrlsPage
 @import hexlet.code.paths.Paths
-@param SitesPage page
+@param UrlsPage page
 
 @template.layout.page(
     content = @`
@@ -19,10 +19,10 @@
                 </tr>
             </thead>
             <tbody>
-                @for(var site : page.getSites())
+                @for(var url : page.getUrls())
                     <tr>
-                        <th scope="row">${site.getId()}</th>
-                        <th><a href="${Paths.urlsIdPath(site.getId())}">${site.getName()}</a></th>
+                        <th scope="row">${url.getId()}</th>
+                        <th><a href="${Paths.urlsIdPath(url.getId())}">${url.getName()}</a></th>
                     </tr>
             @endfor
             </tbody>
