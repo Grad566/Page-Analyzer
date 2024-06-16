@@ -15,7 +15,7 @@
                     <h1>Анализатор страниц</h1>
                 </div>
             </div>
-            <form action="/urls" method="post">
+            <form action="/urls" method="post" class="rss-form text-body">
                 <div class="mb-3">
                     <label class="form-label">Бесплатно проверяйте сайты на SEO пригодность</label>
                     <div class="col-auto">
