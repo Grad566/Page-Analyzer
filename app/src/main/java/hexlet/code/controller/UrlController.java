@@ -69,7 +69,7 @@ public class UrlController {
         page.setFlash((String) flash);
         model.put("page", page);
 
-        var urlChecks = UrlChecksRepository.getUrlChecksBySiteId(id);
+        var urlChecks = UrlChecksRepository.getUrlChecksByUrlId(id);
         var checksPage = new UrlCheckPage(urlChecks);
         model.put("checksPage", checksPage);
 

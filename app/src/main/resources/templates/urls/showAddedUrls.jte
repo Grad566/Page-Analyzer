@@ -10,12 +10,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
             </div>
         @endif
-        <h1>Сайты</h1>
-        <table class="table table-primary table-striped">
+    <div class=".container-lg .mt-5">
+        <h3>Сайты</h3>
+        <table class="table table-bordered table-hover .mt-3">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Имя сайта</th>
+                    <th scope="col">Последняя проверка</th>
+                    <th scope="col">Код ответа</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,9 +26,14 @@
                     <tr>
                         <th scope="row">${url.getId()}</th>
                         <th><a href="${Paths.urlsIdPath(url.getId())}">${url.getName()}</a></th>
+                        @if(page.getLastChecks().containsKey(url.getId()))
+                            <td>${page.getLastChecks().get(url.getId()).getCreatedAt()}</td>
+                            <td>${page.getLastChecks().get(url.getId()).getStatusCode()}</td>
+                        @endif
                     </tr>
             @endfor
             </tbody>
         </table>
+    </div>
     `
 )

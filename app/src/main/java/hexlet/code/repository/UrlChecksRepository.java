@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UrlChecksRepository extends BaseRepository {
-    public static List<UrlCheck> getUrlChecksBySiteId(Long id) throws SQLException {
+    public static List<UrlCheck> getUrlChecksByUrlId(Long id) throws SQLException {
         var result = new ArrayList<UrlCheck>();
         var sql = "SELECT * FROM url_checks WHERE url_id = ?";
         try (var conn = dataSource.getConnection();
