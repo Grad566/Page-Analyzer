@@ -22,12 +22,6 @@ public class UrlsPage {
     private String flash;
     private Map<Long, UrlCheck> lastChecks;
 
-    public UrlsPage(List<Url> urls) {
-        this.urls = urls;
-        lastChecks = new HashMap<>();
-        getLastCheck();
-    }
-
     public UrlsPage(List<Url> urls, String flash) {
         this.urls = urls;
         this.flash = flash;
