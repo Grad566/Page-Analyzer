@@ -38,13 +38,11 @@ public class App {
         hikariConfig.setJdbcUrl(getDataBaseUrl());
 
         var dataSource = new HikariDataSource(hikariConfig);
-        var sqlUrls = readResourceFile("sql/schemaUrls.sql");
-        var sqlUrlChecks = readResourceFile("sql/schemaUrlChecks.sql");
+        var sql= readResourceFile("sql/schema.sql");
 
         try (var connection = dataSource.getConnection();
                 var statement = connection.createStatement()) {
-            statement.execute(sqlUrls);
-            statement.execute(sqlUrlChecks);
+            statement.execute(sql);
         }
 
         BaseRepository.dataSource = dataSource;
