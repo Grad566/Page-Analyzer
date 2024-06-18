@@ -31,6 +31,9 @@ public class UrlController {
     public static void addUrl(Context ctx) {
         var uriParam = ctx.formParam("url");
         try {
+            if (uriParam == null) {
+                System.out.println("NULLLL");
+            }
             var uri = new URI(uriParam);
             var url = uri.toURL();
             var site = new Url(url.toString());
