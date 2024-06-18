@@ -11,6 +11,7 @@ import hexlet.code.repository.UrlChecksRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -31,12 +32,13 @@ public class UrlController {
         var uriParam = ctx.formParam("url");
         try {
             var uri = new URI(uriParam);
-            var url = uri.getScheme() + "//" + uri.getAuthority();
+            var uriToUrl = uri.toURL();
+            var url = uriToUrl.getProtocol() + "://" + uriToUrl.getAuthority();
             var site = new Url(url);
             UrlsRepository.save(site);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.redirect(Paths.urlsPath());
-        } catch (URISyntaxException | IllegalArgumentException e) {
+        } catch (URISyntaxException | MalformedURLException |IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.redirect(Paths.rootPath());
         } catch (SQLException e) {

@@ -80,7 +80,7 @@ class AppTest {
             requestBody = "url=http://localhost:7070/abracodabre";
             var response = client.post("/urls", requestBody);
 
-            assertThat(response.body().string().contains("http//localhost:7070")).isTrue();
+            assertThat(response.body().string().contains("http://localhost:7070")).isTrue();
 
             response = client.get("/urls");
             assertThat(response.code()).isEqualTo(200);
