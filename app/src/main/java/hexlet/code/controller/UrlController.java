@@ -38,7 +38,7 @@ public class UrlController {
             UrlsRepository.save(site);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.redirect(Paths.urlsPath());
-        } catch (URISyntaxException | MalformedURLException |IllegalArgumentException e) {
+        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.redirect(Paths.rootPath());
         } catch (SQLException e) {
