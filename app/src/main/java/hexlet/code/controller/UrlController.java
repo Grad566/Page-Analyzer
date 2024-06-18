@@ -42,7 +42,7 @@ public class UrlController {
             ctx.redirect(Paths.rootPath());
         } catch (SQLException e) {
             ctx.sessionAttribute("flash", "Страница уже существует");
-            ctx.redirect(Paths.rootPath());;
+            ctx.redirect(Paths.rootPath());
         }
 
     }
