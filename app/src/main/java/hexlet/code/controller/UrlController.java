@@ -11,10 +11,12 @@ import hexlet.code.repository.UrlChecksRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -27,23 +29,22 @@ public class UrlController {
     }
 
     public static void addUrl(Context ctx) {
-        var uri = ctx.formParam("url");
-        var pattern = Pattern.compile("^((https|http)://[^/]+)");
-        var matcher = pattern.matcher(uri);
-        if (matcher.find()) {
-            var site = new Url(matcher.group());
-            try {
-                UrlsRepository.save(site);
-                ctx.sessionAttribute("flash", "Страница успешно добавлена");
-                ctx.redirect(Paths.urlsPath());
-            } catch (SQLException e) {
-                ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.redirect(Paths.rootPath());
-            }
-        } else {
+        var uriParam = ctx.formParam("url");
+        try {
+            var uri = new URI(uriParam);
+            var url = uri.toURL();
+            var site = new Url(url.toString());
+            UrlsRepository.save(site);
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.redirect(Paths.urlsPath());
+        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.redirect(Paths.rootPath());
+        } catch (SQLException e) {
+            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.redirect(Paths.rootPath());;
         }
+
     }
 
     public static void showAddedUrls(Context ctx) throws SQLException {
