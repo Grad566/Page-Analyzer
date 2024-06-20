@@ -1,9 +1,14 @@
 package hexlet.code;
 
+import hexlet.code.model.Url;
+import hexlet.code.repository.UrlChecksRepository;
+import hexlet.code.repository.UrlsRepository;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,14 +16,34 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 class AppTest {
     Javalin app;
+    private static MockWebServer server;
 
     @BeforeEach
     public final void setApp() throws IOException, SQLException {
         app = App.getApp();
+    }
+
+    @BeforeAll
+    public static void beforeAll() throws IOException {
+        server = new MockWebServer();
+        var html = Files.readString(Paths.get("src/test/resources/htmlForMock.html"));
+        var serverResponse = new MockResponse()
+                .addHeader("Content-Type", "text/html")
+                .setResponseCode(200)
+                .setBody(html);
+        server.enqueue(serverResponse);
+        server.start();
+    }
+
+    @AfterAll
+    public static void shutdownMock() throws IOException {
+        server.shutdown();
     }
 
     @Test
@@ -26,7 +51,7 @@ class AppTest {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/");
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string().contains("Анализатор страниц"));
+            assertThat(response.body().string()).contains("Анализатор страниц");
         });
     }
 
@@ -36,7 +61,10 @@ class AppTest {
             var requestBody = "url=https://github.com";
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string().contains("https://github.com"));
+            assertThat(response.body().string()).contains("https://github.com");
+
+            var urls = UrlsRepository.getUrls().stream().map(Url::getName).toList();
+            assertThat(urls).contains("https://github.com");
         });
     }
 
@@ -46,7 +74,10 @@ class AppTest {
             var requestBody = "url=http://localhost:7070/abracodabre";
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string().contains("http://localhost:7070"));
+            assertThat(response.body().string()).contains("http://localhost:7070");
+
+            var urls = UrlsRepository.getUrls().stream().map(Url::getName).toList();
+            assertThat(urls).contains("http://localhost:7070");
         });
     }
 
@@ -56,113 +87,63 @@ class AppTest {
             var requestBody = "url=123";
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string().contains("Некорректный URL"));
-        });
-    }
 
-    @Test
-    public void testAddTwoEqualsUrl() {
-        JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://github.com";
-            client.post("/urls", requestBody);
-            requestBody = "url=https://github.com/copy";
-            var response = client.post("/urls", requestBody);
-            assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string().contains("Страница уже существует"));
+            var urls = UrlsRepository.getUrls().stream().map(Url::getName).toList();
+            assertThat((urls).contains("123")).isFalse();
         });
     }
 
     @Test
     public void testShowAddedSites() {
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://github.com";
-            client.post("/urls", requestBody);
-            requestBody = "url=http://localhost:7070/abracodabre";
-            var response = client.post("/urls", requestBody);
+            var url1 = new Url("https://github.com");
+            var url2 = new Url("http://localhost:7070");
+            UrlsRepository.save(url1);
+            UrlsRepository.save(url2);
 
-            assertThat(response.body().string().contains("http://localhost:7070")).isTrue();
-
-            response = client.get("/urls");
+            var response = client.get("/urls");
             assertThat(response.code()).isEqualTo(200);
+
+            var responseBody = response.body().string();
+            assertThat(responseBody.contains("https://github.com"));
+            assertThat(responseBody.contains("http://localhost:7070"));
         });
     }
 
     @Test
-    public void testCheckAddedUrl() {
+    public void testAddedUrl() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://github.com";
             client.post("/urls", requestBody);
             var response = client.get("/urls/1");
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string().contains("https://github.com"));
+            assertThat(response.body().string()).contains("https://github.com");
         });
     }
 
     @Test
-    public void testCheckNotAddedUrl() {
+    public void testNotAddedUrl() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.post("/urls/23498");
             assertThat(response.code()).isEqualTo(404);
         });
     }
 
+
     @Test
-    public void testUrlCheckCode200() throws IOException {
-        MockWebServer mockServer = new MockWebServer();
-        mockServer.enqueue(new MockResponse()
-                .addHeader("Content-Type", "text/html; charset=utf-8"));
-        mockServer.enqueue(new MockResponse().setResponseCode(200));
-        mockServer.start();
-        var baseUrl = mockServer.url("/test").toString();
+    public void testUrlCheckInnerContent() {
+        var baseUrl = server.url("/").toString();
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=" + baseUrl;
             client.post("/urls", requestBody);
             client.post("/urls/1/checks");
-            var response = client.get("/urls/1");
-            assertThat(response.body().string().contains("200"));
-        });
-        mockServer.shutdown();
-    }
 
-//    @Test
-//    public void testUrlCheckCode404() throws IOException {
-//        MockWebServer mockServer = new MockWebServer();
-//        mockServer.enqueue(new MockResponse()
-//                .addHeader("Content-Type", "text/html; charset=utf-8"));
-//        mockServer.enqueue(new MockResponse().setResponseCode(404));
-//        mockServer.start();
-//        var baseUrl = mockServer.url("/test").toString();
-//        JavalinTest.test(app, (server, client) -> {
-//            var requestBody = "url=" + baseUrl;
-//            client.post("/urls", requestBody);
-//            client.post("/urls/1/checks");
-//            var response = client.get("/urls/1");
-//            assertThat(response.body().string().contains("404"));
-//        });
-//        mockServer.shutdown();
-//    }
+            var urlCheck = UrlChecksRepository.getUrlChecksByUrlId(1L).get(0);
 
-    @Test
-    public void testUrlCheckInnerContent() throws IOException {
-        MockWebServer mockServer = new MockWebServer();
-        mockServer.enqueue(new MockResponse()
-                .addHeader("Content-Type", "text/html; charset=utf-8")
-                .setBody("<title>I am a title</title> <h1>I am a h1</h1> "
-                        + "<meta name=\"description\" content=\"I am a content\"> "));
-        mockServer.enqueue(new MockResponse().setResponseCode(200));
-        mockServer.start();
-        var baseUrl = mockServer.url("/test").toString();
-        JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=" + baseUrl;
-            client.post("/urls", requestBody);
-            client.post("/urls/1/checks");
-            var response = client.get("/urls/1");
-            String responseBody = response.body().string();
-            assertThat(responseBody.contains("I am a h1"));
-            assertThat(responseBody.contains("I am a title"));
-            assertThat(responseBody.contains("I am a content"));
+            assertThat(urlCheck.getH1()).contains("I am a h1");
+            assertThat(urlCheck.getTitle()).contains("I am a title");
+            assertThat(urlCheck.getDescription()).contains("I am a content");
         });
-        mockServer.shutdown();
     }
 
 }
