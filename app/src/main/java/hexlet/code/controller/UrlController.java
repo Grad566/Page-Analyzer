@@ -5,9 +5,10 @@ import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.dto.urlChecks.UrlCheckPage;
 import hexlet.code.model.Url;
-import hexlet.code.paths.Paths;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlsRepository;
 import hexlet.code.repository.UrlChecksRepository;
+import hexlet.code.utils.Paths;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
@@ -17,6 +18,7 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -51,7 +53,23 @@ public class UrlController {
     public static void showAddedUrls(Context ctx) throws SQLException {
         try {
             var flash = ctx.consumeSessionAttribute("flash");
-            var page = new UrlsPage(UrlsRepository.getUrls(), (String) flash);
+            var urls = UrlsRepository.getUrls();
+            Map<Long, UrlCheck> lastChecks = new HashMap<>();
+            urls.stream()
+                    .peek(u -> {
+                        var key = u.getId();
+                        try {
+                            var values = UrlChecksRepository.getUrlChecksByUrlId(key);
+                            if (!values.isEmpty()) {
+                                var value = values.get(values.size() - 1);
+                                lastChecks.put(key, value);
+                            }
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e.getMessage());
+                        }
+                    })
+                    .collect(Collectors.toList());
+            var page = new UrlsPage(urls, (String) flash, lastChecks);
             ctx.render("urls/showAddedUrls.jte", model("page", page));
             page.setFlash(null);
         } catch (SQLException e) {

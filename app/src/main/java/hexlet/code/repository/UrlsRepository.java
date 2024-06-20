@@ -1,7 +1,6 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.Url;
-import hexlet.code.utils.TimeUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,8 +27,7 @@ public class UrlsRepository extends BaseRepository {
             if (generatedKey.next()) {
                 url.setId(generatedKey.getLong(1));
                 var createdAt = generatedKey.getTimestamp("created_at");
-                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
-                url.setCreatedAt(formattedCreatedAt);
+                url.setCreatedAt(createdAt);
             }
         }
     }
@@ -44,8 +42,7 @@ public class UrlsRepository extends BaseRepository {
                 var id = resultSet.getLong("id");
                 var name = resultSet.getString("name");
                 var createdAt = resultSet.getTimestamp("created_at");
-                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
-                var site = new Url(id, name, formattedCreatedAt);
+                var site = new Url(id, name, createdAt);
                 result.add(site);
             }
             return result;
@@ -61,8 +58,7 @@ public class UrlsRepository extends BaseRepository {
             if (resultSet.next()) {
                 var name = resultSet.getString("name");
                 var createdAt = resultSet.getTimestamp("created_at");
-                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
-                var site = new Url(id, name, formattedCreatedAt);
+                var site = new Url(id, name, createdAt);
                 return Optional.of(site);
             } else {
                 return Optional.empty();

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,5 +21,5 @@ public class UrlCheck {
     private String h1;
     private String description;
     private Long urlId;
-    private String createdAt;
+    private Timestamp createdAt;
 }

@@ -1,5 +1,6 @@
 @import hexlet.code.dto.urls.UrlPage
 @import hexlet.code.dto.urlChecks.UrlCheckPage
+@import hexlet.code.utils.TimeUtils
 @param UrlCheckPage checksPage
 @param UrlPage page
 
@@ -26,7 +27,7 @@
                     </tr>
                     <tr>
                         <td>Дата создания</td>
-                        <td>${page.getUrl().getCreatedAt()}</td>
+                        <td>${TimeUtils.getFormattedData(page.getUrl().getCreatedAt())}</td>
                     </tr>
                 </tbody>
             </table>
@@ -56,7 +57,7 @@
                                 <td><a>${check.getTitle()}</a></td>
                                 <td><a>${check.getH1()}</a></td>
                                 <td><a>${check.getDescription()}</a></td>
-                                <td><a>${check.getCreatedAt()}</a></td>
+                                <td><a>${TimeUtils.getFormattedData(check.getCreatedAt())}</a></td>
                             </tr>
                         @endfor
                     </tbody>

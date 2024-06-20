@@ -1,5 +1,6 @@
 @import hexlet.code.dto.urls.UrlsPage
-@import hexlet.code.paths.Paths
+@import hexlet.code.utils.Paths
+@import hexlet.code.utils.TimeUtils
 @param UrlsPage page
 
 @template.layout.page(
@@ -27,7 +28,7 @@
                         <th scope="row">${url.getId()}</th>
                         <th><a href="${Paths.urlsIdPath(url.getId())}">${url.getName()}</a></th>
                         @if(page.getLastChecks().containsKey(url.getId()))
-                            <td>${page.getLastChecks().get(url.getId()).getCreatedAt()}</td>
+                            <td>${TimeUtils.getFormattedData(page.getLastChecks().get(url.getId()).getCreatedAt())}</td>
                             <td>${page.getLastChecks().get(url.getId()).getStatusCode()}</td>
                         @endif
                     </tr>

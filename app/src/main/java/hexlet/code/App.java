@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.controller.UrlController;
 import hexlet.code.controller.UrlCheckController;
-import hexlet.code.paths.Paths;
+import hexlet.code.utils.Paths;
 import hexlet.code.repository.BaseRepository;
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;

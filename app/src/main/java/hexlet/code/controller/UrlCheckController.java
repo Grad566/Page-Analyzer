@@ -1,7 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.model.UrlCheck;
-import hexlet.code.paths.Paths;
+import hexlet.code.utils.Paths;
 import hexlet.code.repository.UrlsRepository;
 import hexlet.code.repository.UrlChecksRepository;
 import io.javalin.http.Context;

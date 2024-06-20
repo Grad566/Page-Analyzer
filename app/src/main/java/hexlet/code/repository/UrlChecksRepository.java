@@ -1,7 +1,6 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.UrlCheck;
-import hexlet.code.utils.TimeUtils;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,21 +17,14 @@ public class UrlChecksRepository extends BaseRepository {
             prepareStmt.setLong(1, id);
             var resultSet = prepareStmt.executeQuery();
             while (resultSet.next()) {
-                var checkId = resultSet.getLong("id");
-                var statusCode = resultSet.getInt("status_code");
-                var title = resultSet.getString("title");
-                var h1 = resultSet.getString("h1");
-                var description = resultSet.getString("description");
-                var createdAt = resultSet.getTimestamp("created_at");
-                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
                 var urlCheck = UrlCheck.builder()
-                                        .id(checkId)
-                                        .description(description)
-                                        .h1(h1)
-                                        .title(title)
-                                        .createdAt(formattedCreatedAt)
+                                        .id(resultSet.getLong("id"))
+                                        .description(resultSet.getString("description"))
+                                        .h1(resultSet.getString("h1"))
+                                        .title(resultSet.getString("title"))
+                                        .createdAt(resultSet.getTimestamp("created_at"))
                                         .urlId(id)
-                                        .statusCode(statusCode)
+                                        .statusCode(resultSet.getInt("status_code"))
                                         .build();
                 result.add(urlCheck);
             }
@@ -62,11 +54,8 @@ public class UrlChecksRepository extends BaseRepository {
             if ((generatedKeys.next())) {
                 urlCheck.setId(generatedKeys.getLong(1));
                 var createdAt = generatedKeys.getTimestamp("created_at");
-                var formattedCreatedAt = TimeUtils.getFormattedData(createdAt);
-                urlCheck.setCreatedAt(formattedCreatedAt);
+                urlCheck.setCreatedAt(createdAt);
             }
-        } catch (SQLException e) {
-            throw new SQLException(e.getMessage());
         }
     }
 }
