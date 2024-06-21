@@ -34,7 +34,7 @@ class AppTest {
         server = new MockWebServer();
         var html = Files.readString(Paths.get("src/test/resources/htmlForMock.html"));
         var serverResponse = new MockResponse()
-                .addHeader("Content-Type", "text/html")
+                .addHeader("Content-Type", "text/html; charset=utf-8")
                 .setResponseCode(200)
                 .setBody(html);
         server.enqueue(serverResponse);

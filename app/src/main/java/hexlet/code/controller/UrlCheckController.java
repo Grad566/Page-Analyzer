@@ -20,8 +20,9 @@ public class UrlCheckController {
         var url = site.getName();
 
         try {
-            var codeResponse = Unirest.get(url).asEmpty().getStatus();
-            var body = Unirest.get(url).asString().getBody();
+            var response = Unirest.get(url).asString();
+            var codeResponse = response.getStatus();
+            var body = response.getBody();
             var doc = Jsoup.parse(body);
             var title = doc.title() == null ? "" : doc.title();
             var h1 = doc.selectFirst("h1") == null ? ""

@@ -48,7 +48,7 @@ public class App {
         BaseRepository.dataSource = dataSource;
 
         app.before(ctx -> {
-            ctx.contentType("text/html; charset=utf=8");
+            ctx.contentType("text/html; charset=utf-8");
         });
 
         app.get(Paths.rootPath(), UrlController::enterUrl);
