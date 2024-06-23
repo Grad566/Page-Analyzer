@@ -67,4 +67,23 @@ public class UrlsRepository extends BaseRepository {
             throw new SQLException(e.getMessage());
         }
     }
+
+    public static Optional<Url> getByName(String name) throws SQLException {
+        var sql = "SELECT * FROM urls WHERE name = ?";
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            var resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                var id = resultSet.getLong("id");
+                var createdAt = resultSet.getTimestamp("created_at");
+                var site = new Url(id, name, createdAt);
+                return Optional.of(site);
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
 }

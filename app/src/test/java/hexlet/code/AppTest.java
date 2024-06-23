@@ -56,19 +56,6 @@ class AppTest {
     }
 
     @Test
-    public void testAddUrl() {
-        JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://github.com";
-            var response = client.post("/urls", requestBody);
-            assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string()).contains("https://github.com");
-
-            var urls = UrlsRepository.getUrls().stream().map(Url::getName).toList();
-            assertThat(urls).contains("https://github.com");
-        });
-    }
-
-    @Test
     public void testAddUri() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=http://localhost:7070/abracodabre";
@@ -76,8 +63,9 @@ class AppTest {
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("http://localhost:7070");
 
-            var urls = UrlsRepository.getUrls().stream().map(Url::getName).toList();
-            assertThat(urls).contains("http://localhost:7070");
+            var url = UrlsRepository.getByName("http://localhost:7070")
+                    .orElse(new Url("")).getName();
+            assertThat(url).contains("http://localhost:7070");
         });
     }
 
@@ -88,8 +76,8 @@ class AppTest {
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
 
-            var urls = UrlsRepository.getUrls().stream().map(Url::getName).toList();
-            assertThat((urls).contains("123")).isFalse();
+            var urls = UrlsRepository.getByName("123");
+            assertThat(urls).isEmpty();
         });
     }
 
@@ -111,11 +99,12 @@ class AppTest {
     }
 
     @Test
-    public void testAddedUrl() {
+    public void testShowSingleUrl() {
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://github.com";
-            client.post("/urls", requestBody);
-            var response = client.get("/urls/1");
+            var url = new Url("https://github.com");
+            UrlsRepository.save(url);
+            var response = client.get("/urls/" + url.getId());
+
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("https://github.com");
         });
@@ -140,6 +129,7 @@ class AppTest {
 
             var urlCheck = UrlChecksRepository.getUrlChecksByUrlId(1L).get(0);
 
+            assertThat(urlCheck.getStatusCode()).isEqualTo(200);
             assertThat(urlCheck.getH1()).contains("I am a h1");
             assertThat(urlCheck.getTitle()).contains("I am a title");
             assertThat(urlCheck.getDescription()).contains("I am a content");
