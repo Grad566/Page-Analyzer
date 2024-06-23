@@ -1,6 +1,7 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.UrlCheck;
+import lombok.SneakyThrows;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UrlChecksRepository extends BaseRepository {
-    public static List<UrlCheck> getUrlChecksByUrlId(Long id) throws SQLException {
+    @SneakyThrows
+    public static List<UrlCheck> getUrlChecksByUrlId(Long id) {
         var result = new ArrayList<UrlCheck>();
         var sql = "SELECT * FROM url_checks WHERE url_id = ?";
         try (var conn = dataSource.getConnection();
@@ -29,8 +31,6 @@ public class UrlChecksRepository extends BaseRepository {
                 result.add(urlCheck);
             }
 
-        } catch (SQLException e) {
-            throw new SQLException(e.getMessage());
         }
 
         return result;

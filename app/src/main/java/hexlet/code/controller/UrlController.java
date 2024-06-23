@@ -58,14 +58,10 @@ public class UrlController {
             urls.stream()
                     .peek(u -> {
                         var key = u.getId();
-                        try {
-                            var values = UrlChecksRepository.getUrlChecksByUrlId(key);
-                            if (!values.isEmpty()) {
-                                var value = values.get(values.size() - 1);
-                                lastChecks.put(key, value);
-                            }
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e.getMessage());
+                        var values = UrlChecksRepository.getUrlChecksByUrlId(key);
+                        if (!values.isEmpty()) {
+                            var value = values.get(values.size() - 1);
+                            lastChecks.put(key, value);
                         }
                     })
                     .collect(Collectors.toList());

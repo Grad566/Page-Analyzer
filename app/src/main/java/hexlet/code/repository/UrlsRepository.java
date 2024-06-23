@@ -3,6 +3,7 @@ package hexlet.code.repository;
 import hexlet.code.model.Url;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -68,7 +69,8 @@ public class UrlsRepository extends BaseRepository {
         }
     }
 
-    public static Optional<Url> getByName(String name) throws SQLException {
+    @SneakyThrows
+    public static Optional<Url> getByName(String name) {
         var sql = "SELECT * FROM urls WHERE name = ?";
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
@@ -82,8 +84,6 @@ public class UrlsRepository extends BaseRepository {
             } else {
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new SQLException(e.getMessage());
         }
     }
 }
