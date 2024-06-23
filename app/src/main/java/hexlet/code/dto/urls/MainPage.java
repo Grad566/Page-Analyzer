@@ -1,12 +1,15 @@
 package hexlet.code.dto.urls;
 
-import lombok.AllArgsConstructor;
+import hexlet.code.dto.BasePage;
 import lombok.Getter;
 import lombok.Setter;
 
+
+
 @Getter
 @Setter
-@AllArgsConstructor
-public class MainPage {
-    private String flash;
+public class MainPage extends BasePage {
+    public MainPage(String flash) {
+        super(flash);
+    }
 }

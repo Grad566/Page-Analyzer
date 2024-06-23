@@ -80,9 +80,8 @@ public class UrlController {
 
         Map<String, Object> model = new HashMap<>();
 
-        var page = new UrlPage(site);
-        var flash = ctx.consumeSessionAttribute("flash");
-        page.setFlash((String) flash);
+        String flash = ctx.consumeSessionAttribute("flash");
+        var page = new UrlPage(site, flash);
         model.put("page", page);
 
         var urlChecks = UrlChecksRepository.getUrlChecksByUrlId(id);
