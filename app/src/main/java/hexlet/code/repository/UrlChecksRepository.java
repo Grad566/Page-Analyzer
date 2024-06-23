@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UrlChecksRepository extends BaseRepository {
     @SneakyThrows
@@ -57,5 +59,32 @@ public class UrlChecksRepository extends BaseRepository {
                 urlCheck.setCreatedAt(createdAt);
             }
         }
+    }
+
+    @SneakyThrows
+    public static Map<Long, UrlCheck> getLastChecks() {
+        var result = new HashMap<Long, UrlCheck>();
+        var sql = "SELECT uc.url_id, uc.status_code, uc.created_at "
+                + "FROM url_checks uc "
+                + "JOIN ( "
+                + "    SELECT url_id, MAX(created_at) AS max_created_at"
+                + "    FROM url_checks "
+                + "    GROUP BY url_id "
+                + ") uc_max ON uc.url_id = uc_max.url_id AND uc.created_at = uc_max.max_created_at;";
+        try (var conn = dataSource.getConnection();
+             var prepareStmt = conn.prepareStatement(sql)) {
+            var resultSet = prepareStmt.executeQuery();
+            while (resultSet.next()) {
+                var urlCheck = UrlCheck.builder()
+                        .createdAt(resultSet.getTimestamp("created_at"))
+                        .urlId(resultSet.getLong("url_id"))
+                        .statusCode(resultSet.getInt("status_code"))
+                        .build();
+                result.put(urlCheck.getUrlId(), urlCheck);
+            }
+
+        }
+
+        return result;
     }
 }

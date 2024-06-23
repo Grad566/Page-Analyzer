@@ -1,7 +1,5 @@
 @import hexlet.code.dto.urls.UrlPage
-@import hexlet.code.dto.urlChecks.UrlCheckPage
 @import hexlet.code.utils.TimeUtils
-@param UrlCheckPage checksPage
 @param UrlPage page
 
 
@@ -48,9 +46,9 @@
                         <th scope="col">Дата проверки</th>
                     </tr>
                 </thead>
-                @if(checksPage.getUrlChecks() != null)
+                @if(page.getUrlChecks() != null)
                     <tbody>
-                        @for(var check : checksPage.getUrlChecks())
+                        @for(var check : page.getUrlChecks())
                             <tr>
                                 <th scope="row">${check.getId()}</th>
                                 <td><a>${check.getStatusCode()}</a></td>

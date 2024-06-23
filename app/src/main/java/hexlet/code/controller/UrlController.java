@@ -3,7 +3,6 @@ package hexlet.code.controller;
 import hexlet.code.dto.urls.MainPage;
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
-import hexlet.code.dto.urlChecks.UrlCheckPage;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlsRepository;
@@ -16,9 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -30,44 +27,32 @@ public class UrlController {
         page.setFlash(null);
     }
 
-    public static void addUrl(Context ctx) {
+    public static void addUrl(Context ctx) throws SQLException {
         var uriParam = ctx.formParam("url");
         try {
             var site = new Url(parseUrl(uriParam));
-            UrlsRepository.save(site);
-            ctx.sessionAttribute("flash", "Страница успешно добавлена");
-            ctx.redirect(Paths.urlsPath());
+            if (isExist(site)) {
+                ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.redirect(Paths.rootPath());
+            } else {
+                UrlsRepository.save(site);
+                ctx.sessionAttribute("flash", "Страница успешно добавлена");
+                ctx.redirect(Paths.urlsPath());
+            }
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.redirect(Paths.rootPath());
-        } catch (SQLException e) {
-            ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.redirect(Paths.rootPath());
         }
 
     }
 
     public static void showAddedUrls(Context ctx) throws SQLException {
-        try {
-            var flash = ctx.consumeSessionAttribute("flash");
-            var urls = UrlsRepository.getUrls();
-            Map<Long, UrlCheck> lastChecks = new HashMap<>();
-            urls.stream()
-                    .peek(u -> {
-                        var key = u.getId();
-                        var values = UrlChecksRepository.getUrlChecksByUrlId(key);
-                        if (!values.isEmpty()) {
-                            var value = values.get(values.size() - 1);
-                            lastChecks.put(key, value);
-                        }
-                    })
-                    .collect(Collectors.toList());
-            var page = new UrlsPage(urls, (String) flash, lastChecks);
-            ctx.render("urls/showAddedUrls.jte", model("page", page));
-            page.setFlash(null);
-        } catch (SQLException e) {
-            throw new SQLException("Data base error, when try to get urls");
-        }
+        var flash = ctx.consumeSessionAttribute("flash");
+        var urls = UrlsRepository.getUrls();
+        Map<Long, UrlCheck> lastChecks = UrlChecksRepository.getLastChecks();
+        var page = new UrlsPage(urls, (String) flash, lastChecks);
+        ctx.render("urls/showAddedUrls.jte", model("page", page));
+        page.setFlash(null);
     }
 
     public static void showInfoAboutUrl(Context ctx) throws SQLException {
@@ -75,17 +60,11 @@ public class UrlController {
         var site = UrlsRepository.getById(id)
                     .orElseThrow(() -> new NotFoundResponse("Site with id: " + " not found"));
 
-        Map<String, Object> model = new HashMap<>();
-
         String flash = ctx.consumeSessionAttribute("flash");
-        var page = new UrlPage(site, flash);
-        model.put("page", page);
-
         var urlChecks = UrlChecksRepository.getUrlChecksByUrlId(id);
-        var checksPage = new UrlCheckPage(urlChecks);
-        model.put("checksPage", checksPage);
+        var page = new UrlPage(site, urlChecks, flash);
 
-        ctx.render("urls/showInfoAboutUrl.jte", model);
+        ctx.render("urls/showInfoAboutUrl.jte", model("page", page));
         page.setFlash(null);
     }
 
@@ -94,5 +73,10 @@ public class UrlController {
         var uri = new URI(link);
         var uriToUrl = uri.toURL();
         return uriToUrl.getProtocol() + "://" + uriToUrl.getAuthority();
+    }
+
+    private static boolean isExist(Url url) {
+        var name = url.getName();
+        return UrlsRepository.getByName(name).isPresent();
     }
 }
