@@ -33,10 +33,7 @@ public class UrlController {
     public static void addUrl(Context ctx) {
         var uriParam = ctx.formParam("url");
         try {
-            var uri = new URI(uriParam);
-            var uriToUrl = uri.toURL();
-            var url = uriToUrl.getProtocol() + "://" + uriToUrl.getAuthority();
-            var site = new Url(url);
+            var site = new Url(parseUrl(uriParam));
             UrlsRepository.save(site);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.redirect(Paths.urlsPath());
@@ -90,5 +87,12 @@ public class UrlController {
 
         ctx.render("urls/showInfoAboutUrl.jte", model);
         page.setFlash(null);
+    }
+
+    private static String parseUrl(String link) throws
+            URISyntaxException, MalformedURLException {
+        var uri = new URI(link);
+        var uriToUrl = uri.toURL();
+        return uriToUrl.getProtocol() + "://" + uriToUrl.getAuthority();
     }
 }
