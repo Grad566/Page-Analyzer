@@ -4,10 +4,14 @@
 @template.layout.page(
     content = @`
         @if(page.getFlash() != null)
-            <div class="alert alert-warning" role="alert">
-                ${page.getFlash()}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
-            </div>
+            @if(page.getFlashType().equals("error"))
+                <div class="alert alert-warning" role="alert">
+            @else
+                <div class="alert alert-primary" role="alert">
+            @endif
+                    ${page.getFlash()}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                </div>
         @endif
         <div class="container text-center">
             <div class="row">

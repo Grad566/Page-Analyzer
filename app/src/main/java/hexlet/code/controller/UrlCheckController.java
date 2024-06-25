@@ -41,10 +41,12 @@ public class UrlCheckController {
                                         .build();
             UrlChecksRepository.save(urlCheck);
             ctx.sessionAttribute("flash", "Страница успешно проверенна");
+            ctx.sessionAttribute("flashType", "success");
             ctx.redirect(Paths.urlsIdPath(siteId));
 
         } catch (Exception e) {
             ctx.sessionAttribute("flash", "Некорректный адрес");
+            ctx.sessionAttribute("flashType", "error");
             ctx.redirect(Paths.urlsIdPath(siteId));
         }
 

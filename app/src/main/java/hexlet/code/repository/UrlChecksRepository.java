@@ -55,8 +55,7 @@ public class UrlChecksRepository extends BaseRepository {
             var generatedKeys = prepareStmt.getGeneratedKeys();
             if ((generatedKeys.next())) {
                 urlCheck.setId(generatedKeys.getLong(1));
-                var createdAt = generatedKeys.getTimestamp("created_at");
-                urlCheck.setCreatedAt(createdAt);
+                urlCheck.setCreatedAt(time);
             }
         }
     }

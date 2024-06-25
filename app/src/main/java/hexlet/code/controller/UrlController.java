@@ -22,7 +22,9 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 public class UrlController {
     public static void enterUrl(Context ctx) {
         var flash = ctx.consumeSessionAttribute("flash");
+        String flashType = ctx.consumeSessionAttribute("flashType");
         var page = new MainPage((String) flash);
+        page.setFlashType(flashType);
         ctx.render("urls/mainPage.jte", model("page", page));
         page.setFlash(null);
     }
@@ -33,14 +35,17 @@ public class UrlController {
             var site = new Url(parseUrl(uriParam));
             if (isExist(site)) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.sessionAttribute("flashType", "error");
                 ctx.redirect(Paths.rootPath());
             } else {
                 UrlsRepository.save(site);
                 ctx.sessionAttribute("flash", "Страница успешно добавлена");
+                ctx.sessionAttribute("flashType", "success");
                 ctx.redirect(Paths.urlsPath());
             }
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flashType", "error");
             ctx.redirect(Paths.rootPath());
         }
 
@@ -48,9 +53,11 @@ public class UrlController {
 
     public static void showAddedUrls(Context ctx) throws SQLException {
         var flash = ctx.consumeSessionAttribute("flash");
+        String flashType = ctx.consumeSessionAttribute("flashType");
         var urls = UrlsRepository.getUrls();
         Map<Long, UrlCheck> lastChecks = UrlChecksRepository.getLastChecks();
         var page = new UrlsPage(urls, (String) flash, lastChecks);
+        page.setFlashType(flashType);
         ctx.render("urls/showAddedUrls.jte", model("page", page));
         page.setFlash(null);
     }
@@ -61,8 +68,10 @@ public class UrlController {
                     .orElseThrow(() -> new NotFoundResponse("Site with id: " + " not found"));
 
         String flash = ctx.consumeSessionAttribute("flash");
+        String flashType = ctx.consumeSessionAttribute("flashType");
         var urlChecks = UrlChecksRepository.getUrlChecksByUrlId(id);
         var page = new UrlPage(site, urlChecks, flash);
+        page.setFlashType(flashType);
 
         ctx.render("urls/showInfoAboutUrl.jte", model("page", page));
         page.setFlash(null);

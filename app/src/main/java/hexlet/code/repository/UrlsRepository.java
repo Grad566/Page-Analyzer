@@ -27,8 +27,7 @@ public class UrlsRepository extends BaseRepository {
             var generatedKey = prepareStmt.getGeneratedKeys();
             if (generatedKey.next()) {
                 url.setId(generatedKey.getLong(1));
-                var createdAt = generatedKey.getTimestamp("created_at");
-                url.setCreatedAt(createdAt);
+                url.setCreatedAt(time);
             }
         }
     }
